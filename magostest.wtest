@@ -1,7 +1,83 @@
 import academia.*
 import magos.*
-describe "academina" {
-    test "test 1" {
-        assert.that(true)
+describe "academia" {
+    test "La academia intenta reclutar a Aldric, pero no lo logra y queda asignado en la lista de candidatos" {
+        academia.asignarEnAcademia(aldric)
+
+        assert.that(academia.candidatos().contains(aldric))
     }
+
+    test "Aldric no puede entrar a a la academia, por lo que cambia al baston de Fuego, entrena y vuelve a ser evaluado, por lo que finalmente logra unirse al equipo" {
+        academia.asignarEnAcademia(aldric)
+        aldric.cambiarBaston("Baston de Fuego")
+        aldric.entrenar()
+        academia.volverAEvaluar()
+
+        assert.that(academia.equipo().contains(aldric))
+    }
+
+    test "Selene alterna Luz Lunar y entrena, lo que eleva su poder a 120, por lo que no podria unirse al equipo ahora" {
+        selene.alternarEstadoDeHabilidad()
+        selene.entrenar()
+        academia.asignarEnAcademia(selene)
+
+        assert.notThat(academia.equipo().contains(selene))
+    }
+
+    test "Selene entrena la Luz Solar sin alterar su estado y es evaluada por la academia, por lo que esta vez si logra unirse al equipo" {
+        selene.entrenar()
+        academia.asignarEnAcademia(selene)
+
+        assert.that(academia.equipo().contains(selene))
+    }
+
+    test "Balthazar podria unirse al equipo, pero decide entrenar dos veces por lo que su energia aumento a 65 y su poder baja a 29, por lo que en este momento no podria ser reclutado" {
+        balthazar.entrenar()
+        balthazar.entrenar()
+        academia.asignarEnAcademia(balthazar)
+
+        assert.notThat(academia.equipo().contains(balthazar))
+    }
+
+    test "Iris usa el poder de sanacion en el escudo por lo que la resistencia del escudo aumenta a 480 y la durabilidad a 720 " {
+        iris.usarSanacionEnEscudoMagicoDeArcana()
+
+        assert.equals(480, academia.escudoMagicoResistencia())
+        assert.equals(720, academia.escudoMagicoDurabilidad())
+        
+    }
+
+    test "Iris entrena y usa el poder de sanacion en el escudo por lo que la resistencia aumenta a 480 y la durabilidad aumenta en 760" {
+        iris.entrenar()
+        iris.usarSanacionEnEscudoMagicoDeArcana()
+
+        assert.equals(550, academia.escudoMagicoResistencia())
+        assert.equals(700, academia.escudoMagicoDurabilidad())
+    }
+
+    test "La academia recluta 4 magos y Balthazar e Iris quedan en el equipo" {
+        academia.asignarEnAcademia(selene)
+        academia.asignarEnAcademia(balthazar)
+        academia.asignarEnAcademia(iris)
+        academia.asignarEnAcademia(aldric)
+
+        assert.that(academia.candidatos().contains(selene) and academia.candidatos().contains(balthazar))
+    }
+
+    test "Selene pertence a equipo, el poder del equipo es 95, la delta de energia es 20 y la academia esta en optimas condiciones" {
+        selene.entrenar()
+        balthazar.entrenar()
+        academia.asignarEnAcademia(selene)
+        academia.asignarEnAcademia(balthazar)
+        academia.asignarEnAcademia(iris)
+        academia.asignarEnAcademia(aldric)
+        academia.poderTotalDeEquipo()
+        
+        assert.that(academia.equipo().contains(selene))
+        assert.equals(95, academia.poderTotalDeEquipo())
+        assert.equals(20, academia.deltaDeEnergia(academia.equipo()))
+        assert.that(academia.equipoEnCondicionOptima())
+    } 
 }
+
+// EL ENUNCIADO DEL TEST DE IRIS ESTA MAL HECHO! YA QUE ELLA ARRANCA CON UN NUMERO PAR DE BASE, POR LO QUE SINO ENTRENA NO SE PUEDE DAR EL TEST QUE PIDE EL ENUNCIADO
